@@ -1,0 +1,104 @@
+import java.time.LocalDateTime;
+import java.util.Locale;
+import java.util.Scanner;
+import java.text.NumberFormat;
+
+public class Salary {
+    private Locale locale;
+
+    public static void main(String[] args) {
+        Salary salaryApp = new Salary();
+        
+        salaryApp.setLocaleBasedOnUserInput();
+        
+      
+        salaryApp.generateSalarySlip();
+    }
+
+   
+    public void setLocaleBasedOnUserInput() {
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.println("Choose a locale option for currency: ");
+        System.out.println("1. US (USD)");
+        System.out.println("2. India (INR)");
+        System.out.println("3. Japan (JPY)");
+        
+        int option = scanner.nextInt();
+        scanner.nextLine();
+
+        switch (option) {
+            case 1:
+                locale = Locale.US;
+                System.out.println("Locale set to United States");
+                break;
+            case 2:
+                locale = new Locale("en", "IN");
+                System.out.println("Locale set to India");
+                break;
+            case 3:
+                locale = Locale.JAPAN;
+                System.out.println("Locale set to Japan");
+                break;
+            default:
+                locale = Locale.getDefault();
+                System.out.println("Invalid option, default locale set: " + locale);
+                break;
+        }
+    }
+
+   
+    public void generateSalarySlip() {
+        try (Scanner scanner = new Scanner(System.in)) {
+           
+            System.out.print("Enter employee name: ");
+            String employeeName = scanner.nextLine();
+            System.out.print("Enter employee ID: ");
+            int employeeID = scanner.nextInt();
+            scanner.nextLine();  
+            
+            LocalDateTime objectDateTime = LocalDateTime.now();
+
+            
+            System.out.print("Enter basic pay in lakh: ");
+            double basicSalary = scanner.nextDouble();
+            double taxPercentage = 0.0;
+            if (basicSalary > 3.21 && basicSalary <= 4.5) {
+                taxPercentage = 12;
+            } else if (basicSalary > 4.51 && basicSalary <= 6.99) {
+                taxPercentage = 15;
+            } else {
+                taxPercentage = 20;
+            }
+
+         
+            double hra = (basicSalary * 25) / 100;
+            double da = (basicSalary * 30) / 100;
+            double pf = (basicSalary * 12) / 100;
+            double ta = (basicSalary * 20) / 100;
+            double tax = (basicSalary * taxPercentage) / 100;
+            double grossSalary = basicSalary + hra + da;
+            double netSalary = grossSalary - pf - tax;
+
+           
+            NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(locale);
+
+            
+            System.out.println("\nSalary Slip");
+            System.out.println("Java Company");
+            System.out.println("Date: " + objectDateTime.toLocalDate());
+            System.out.println("Time: " + objectDateTime.toLocalTime());
+            System.out.println("-----------");
+            System.out.println("Employee Name: " + employeeName);
+            System.out.println("Employee ID: " + employeeID);
+            System.out.println("Basic Salary: " + currencyFormatter.format(basicSalary * 100000)); 
+            System.out.println("HRA (@25%): " + currencyFormatter.format(hra * 100000));
+            System.out.println("DA (@30%): " + currencyFormatter.format(da * 100000));
+            System.out.println("PF (@12%): " + currencyFormatter.format(pf * 100000));
+            System.out.println("TA (@20%): " + currencyFormatter.format(ta * 100000));
+            System.out.println("Gross Salary: " + currencyFormatter.format(grossSalary * 100000));
+            System.out.println("Tax (@" + taxPercentage + "%): " + currencyFormatter.format(tax * 100000));
+            System.out.println("Net Salary: " + currencyFormatter.format(netSalary * 100000));
+        }
+    }
+}
